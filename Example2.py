@@ -2,7 +2,8 @@ from machine import automata
 from machine import operations
 from machine import dijkstra2 as dk
 from machine import rob_callback as rc
-import rps.robotarium as robotarium
+from machine import robotarium
+from machine import robotarium_abc
 from rps.utilities.transformations import *
 from rps.utilities.barrier_certificates import *
 from rps.utilities.misc import *

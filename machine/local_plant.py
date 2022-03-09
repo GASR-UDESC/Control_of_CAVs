@@ -15,7 +15,7 @@ def real_transition(real_state, logical_state, dic_positions, real_coordinates, 
     real_y = real_coordinates[1][agent]
     logical_x = dic_positions[logical_state][0]
     logical_y = dic_positions[logical_state][1]
-    
+
     distance = sqrt((real_x-logical_x)**2+(real_y-logical_y)**2).real
     if distance < radius:
         print(distance, radius)
@@ -24,4 +24,9 @@ def real_transition(real_state, logical_state, dic_positions, real_coordinates, 
         return real_state
 
 
-
+def goal_update(position_array, dic_positions, goals):
+    for i in range(len(goals)):
+        position_array[0][i] = dic_positions[goals[i]][0]
+        position_array[1][i] = dic_positions[goals[i]][1]
+        position_array[2][i] = dic_positions[goals[i]][2]
+    return(position_array)

@@ -3,6 +3,8 @@ from machine import automata
 from machine import operations
 from machine import dijkstra2 as dk
 from machine import rob_callback as rc
+from machine import map_generation as mpg
+from machine import local_plant as local 
 from rps import robotarium
 from rps.utilities.misc import *
 from rps.utilities.controllers import *
@@ -10,93 +12,43 @@ import numpy as np
 import random
 def EXPERIMENT01():
     #Size of the Matrix of states
-    w, h, N = 3, 2, 2
+    W, H, N = 3, 2, 2
 
-    #Creating States
-    number_of_states = w*h
-    states = [None]*number_of_states
+    #Arena dimensions
+    WIDTH, HEIGHT = 3.2, 2
 
-    #Defining the positions of each State
-    for i in range(number_of_states):
-        states[i] = automata.State('S'+str(i))
-
-
-    # Creating events
-    number_of_events = 4*w*h+2*(w+h-2)
-    events = [None]*number_of_events
-    for i in range(number_of_events):
-        events[i] = automata.Event(('e'+str(i)), 1, True)
+    #Position tolerance
+    RADIUS = 0.06
+    
+    #Creating the set of States and Events
+    (states, events) = mpg.generate_states_and_events(W, H)
 
     #Creating the automaton itself and its positions
-    trans = dict()
-    Matrix_states = [[0 for x in range(w)] for y in range(h)]
-    #Data about positions
-    wsize = 3.2
-    whalf = wsize/2
-    hsize = 2
-    hhalf = hsize/2
-    Initial_point = np.array([0, 0, 0])
-    wdif = wsize/(w)
-    hdif = hsize/(h)
-    positions = [[0 for x in range(w)] for y in range(h)]
-    DIC_POSITIONS = dict()
-    counter_states = 0
-    for i in range(h):
-        for j in range(w):
-            Matrix_states[i][j] = states[counter_states]
-            trans[states[counter_states]] = dict()
-            positions[i][j] = [x + y for x, y in zip(Initial_point, [(j-(w-1)/2)*wdif, (-i+(h-1)/2)*hdif, 0])]
-            DIC_POSITIONS[states[counter_states]] = positions[i][j]
-            counter_states += 1
-    counter_events = 0
-
-    for i in range(h):
-        for j in range(w):
-            if i<(h-1):
-                trans[Matrix_states[i][j]][events[counter_events]] = Matrix_states[i+1][j]
-                counter_events += 1
-            if i>(0):
-                trans[Matrix_states[i][j]][events[counter_events]] = Matrix_states[i - 1][j]
-                counter_events += 1
-            if j<(w-1):
-                trans[Matrix_states[i][j]][events[counter_events]] = Matrix_states[i][j+1]
-                counter_events += 1
-            if j>(0):
-                trans[Matrix_states[i][j]][events[counter_events]] = Matrix_states[i][j-1]
-                counter_events += 1
-
+    (trans, DIC_POSITIONS, Matrix_states) = mpg.generate_transitions_and_positions(states, events, W, H, WIDTH, HEIGHT)
     G = automata.Automaton(trans, events[0])
 
-    #Creating inputs for robotarium
-    RADIUS = 0.06
-
-    #Experiment 1 - Position swap
-    Initial_pos = [Matrix_states[0][0],Matrix_states[0][2]]
+    
+    #Loading initial state and a goal
+    initial_pos = [Matrix_states[0][0],Matrix_states[0][2]]
     Final_pos = [Matrix_states[0][2],Matrix_states[0][0]]
+    goal_points = np.ones([3, N])
 
-    real_state = Initial_pos
-    pivot_state = [[]]*N
-    past_state = [[]]*N
-    past_state2= [[]]*N
+    real_state = initial_pos
+    logical_state = initial_pos
 
     #Path planning variables
-    N = len(Final_pos)
     T = [None]*N
     S = [None]*N
     T_optimal=[None]*N
     S_optimal=[None]*N
-    T_dj = [None]*N
-    S_dj = [None]*N
-    logical_state = [None] * N
+
     priority_radius = [2]*N
     priority_radius[0] = 2
 
 
 
-    buffer = [0]*N
     communication_radius = [3]*N
     blacklist = dict()
-    blacklist_individual = dict()
     calculating = [True]*N
     defined_path = dict()
     calculating=[True]*N
@@ -105,12 +57,11 @@ def EXPERIMENT01():
         defined_path[i] = []
 
     #Control variables
-    possible = rc.FC_POSSIBLE_STATES_ARRAY(DIC_POSITIONS)
-    goal_points = np.ones([3, N])
+
 
 
     # Initializing the states list
-    initial_points = rc.FC_SET_ALL_POSITIONS(DIC_POSITIONS, Initial_pos)
+    initial_points = rc.FC_SET_ALL_POSITIONS(DIC_POSITIONS, initial_pos)
 
     # Initializing the robotarium
     r = robotarium.Robotarium(number_of_robots=N, show_figure=True, initial_conditions=initial_points, sim_in_real_time=True)
@@ -120,16 +71,12 @@ def EXPERIMENT01():
     x = r.get_poses()
     x_si = uni_to_si_states(x)#"""
     r.step()
-
-    RUN = True
-    first = [True]*N
-    finished = [0]*N
+    
 
     # Creating an structure of past states during actual order
     past = dict()
     for s in range(N):
         past[s] = []
-    string_size = list()
     while real_state != Final_pos:
         x = r.get_poses()
         x_si = uni_to_si_states(x)
@@ -137,10 +84,9 @@ def EXPERIMENT01():
         for i in range(N):
             blacklist[i] = []
             past_state[i] = real_state[i]
-            real_state[i] = rc.FC_MAKE_REAL_TRANSITION(possible, states, real_state[i], x, i, RADIUS)
+            real_state[i] = local.real_transition(real_state[i], logical_state[i],DIC_POSITIONS,x,i,RADIUS)
             if past_state[i] != real_state[i]:
                 past_state2[i] = past_state[i]
-
         for i in range(N):
             if real_state[i] != Final_pos[i]:
                 if real_state[i] == pivot_state[i]:

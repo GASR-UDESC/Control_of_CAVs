@@ -72,7 +72,8 @@ print('Average: ', Average3)
 print('Max: ', max(Ex03_times))
 print("Min: ", min(Ex03_times))"""
 
-
+E3.EXPERIMENT03()
+"""
 Iterations_amount = 10
 Ex05_noprio_times = [0]*Iterations_amount
 Ex05_noprio_times_agent = [0]*Iterations_amount
@@ -126,7 +127,7 @@ print("Min (agent): ", min(Ex05_prio_times_agent))
 
 print('\n')
 
-"""
+""""""
 Iterations_amount = 30
 Ex03_times = [0]*Iterations_amount
 Average3 = 0

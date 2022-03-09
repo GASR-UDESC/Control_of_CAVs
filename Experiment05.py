@@ -113,7 +113,7 @@ def EXPERIMENT05(priority_cav, with_priority):
     initial_points = rc.FC_SET_ALL_POSITIONS(DIC_POSITIONS, Initial_pos)
 
     # Initializing the robotarium
-    r = robotarium.Robotarium(number_of_robots=N, show_figure=False, initial_conditions=initial_points, sim_in_real_time=False)
+    r = robotarium.Robotarium(number_of_robots=N, show_figure=True, initial_conditions=initial_points, sim_in_real_time=False)
     single_integrator_position_controller = create_si_position_controller()
     __, uni_to_si_states = create_si_to_uni_mapping()
     si_to_uni_dyn = create_si_to_uni_dynamics_with_backwards_motion()

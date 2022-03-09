@@ -1,17 +1,5 @@
 import dijkstar as dj
-def graph_G(auto,black,initial):
-    graph = dj.Graph()
-    pos = auto.transitions
-    sts = auto.states_set()
-    for state in sts:
-        t = pos[state].keys()
-        for eve in t:
-            if state == initial:
-                if eve not in black:
-                    graph.add_edge(state, pos[state][eve], eve.weight)
-            else:
-                graph.add_edge(state, pos[state][eve], eve.weight)
-    return graph
+
 def path_trans(auto, path):
     sequence = [None] * (len(path) - 1)
     for s in range(len(path)-1):
@@ -21,13 +9,6 @@ def path_trans(auto, path):
             if final == path[s+1]:
                 sequence[s] = trans
     return(sequence)
-
-def PATH(AUTO, BLACK, INITIAL, FINAL):
-    GRAPH = graph_G(AUTO, BLACK,INITIAL)
-    P_calculus = dj.find_path(GRAPH, INITIAL, FINAL)
-    P_nodes = P_calculus.nodes
-    TRANS = path_trans(AUTO, P_nodes)
-    return(TRANS, P_nodes)
 
 def graph_G2(auto,black):
     graph = dj.Graph()
@@ -41,6 +22,7 @@ def graph_G2(auto,black):
     return graph
 
 def PATH2(AUTO, BLACK, INITIAL, FINAL):
+    ###########################
     GRAPH = graph_G2(AUTO, BLACK)
     P_calculus = dj.find_path(GRAPH, INITIAL, FINAL)
     P_nodes = P_calculus.nodes
@@ -48,6 +30,7 @@ def PATH2(AUTO, BLACK, INITIAL, FINAL):
     return(TRANS, P_nodes)
 
 def DIST(AUTO, INITIAL, RADIUS):
+    ###########################
     l = 0
     s = [INITIAL]
     dist = dict()
@@ -73,29 +56,4 @@ def DIST(AUTO, INITIAL, RADIUS):
         for ss in dist[L]:
             s_list.append(ss)
     return(s_list)
-
-
-def GRAPH_VISION(auto, black, initial, r):
-    d = DIST(auto, initial, r)
-    graph = dj.Graph()
-    pos = auto.transitions
-    sts = auto.states_set()
-    for state in sts:
-        t = pos[state].keys()
-        for eve in t:
-            s2 = pos[state][eve]
-            if state in d:
-                if eve not in black:
-                    graph.add_edge(state, pos[state][eve], eve.weight)
-            else:
-                graph.add_edge(state, pos[state][eve], eve.weight)
-    return graph
-
-def PATH_VISION(AUTO, BLACK, INITIAL, FINAL,RADIUS):
-    GRAPH = GRAPH_VISION(AUTO, BLACK, INITIAL,RADIUS)
-    P_calculus = dj.find_path(GRAPH, INITIAL, FINAL)
-    P_nodes = P_calculus.nodes
-    TRANS = path_trans(AUTO, P_nodes)
-    #print(P_nodes)
-    return(TRANS, P_nodes)
 

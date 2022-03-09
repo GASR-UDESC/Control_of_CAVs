@@ -3,14 +3,16 @@ from machine import dijkstra2
 import numpy as np
 
 def FC_SET_GOAL_POINTS(dic_states, goal, n, where_to):
+    ###########################
     """ Set the goal position to the required position"""
     goal_point = dic_states[where_to]
     goal[0][n] = goal_point[0]
     goal[1][n] = goal_point[1]
     goal[2][n] = goal_point[2]
-    return goal
+    return
 
 def FC_POSSIBLE_STATES_ARRAY(dic_states):
+    ###########################
     """ Creates an array with the x and y information based on possible states"""
     possible_position = np.zeros([len(dic_states), 3])
     counter = 0
@@ -21,6 +23,7 @@ def FC_POSSIBLE_STATES_ARRAY(dic_states):
     return possible_position
 
 def FC_SET_ALL_POSITIONS (dic_states, position):
+    ###########################
     position_array = np.zeros([3, len(position)])
     for b in range(len(position)):
         position_array[0][b] = dic_states[position[b]][0]
@@ -29,6 +32,7 @@ def FC_SET_ALL_POSITIONS (dic_states, position):
     return(position_array)
 
 def FC_MAKE_REAL_TRANSITION(possible_positions, possible_names, state_now, position_read, number_of_robot, safe_radius):
+    ###########################
     L = len(possible_positions)
     distance_arrayx = np.zeros(L)
     distance_arrayy = np.zeros(L)
@@ -52,6 +56,7 @@ def FC_MAKE_REAL_TRANSITION(possible_positions, possible_names, state_now, posit
     return (state)
 
 def add_black3(auto, blacklist, state):
+    ###########################
     black = list()
     #print(state)
     k = auto.transitions.keys()
@@ -68,6 +73,7 @@ def add_black3(auto, blacklist, state):
     return blacklist
 
 def check_block(trans, real, blacklist):
+    ###########################
     #print(trans[real].keys(),blacklist)
     Events = trans[real].keys()
     a = len(Events)
@@ -86,6 +92,7 @@ def check_block(trans, real, blacklist):
     return(True)
 
 def add_black_real_logical(auto,blacklist, real,logical):
+    ###########################
     black = list()
     for ev, j2 in auto.transitions[logical].items():
         if j2 == real:

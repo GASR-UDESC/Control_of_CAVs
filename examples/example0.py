@@ -26,7 +26,6 @@ RADIUS = 0.06
 (trans, dic_pos, matrix_states) = mpg.generate_transitions_and_positions(states, events, W, H, WIDTH, HEIGHT)
 G = automata.Automaton(trans, events[0])
 
-
 #Loading initial state and a goal
 initial_pos = [matrix_states[0][0], matrix_states[0][2]]
 final_pos = [matrix_states[0][2], matrix_states[0][0]]
@@ -40,7 +39,10 @@ logical_state = initial_pos
 SHOW_FIGURE = True
 REAL_TIME = True
 local.goal_update(goal_points, dic_pos, final_pos)
+print(goal_points)
 r = rob.Simulator(N, SHOW_FIGURE, goal_points, REAL_TIME)
+
+#Simulation loop
 while True:
     r.step_begin()
     (task_conclusion, event_conclusion) = pathc.event_conclusion(real_state, logical_state, final_pos)
@@ -53,4 +55,5 @@ while True:
         else:
             #update simulation
             pass
-    r.step_end()
+    local.goal_update(goal_points, dic_pos, final_pos)
+    r.step_end(goal_points)

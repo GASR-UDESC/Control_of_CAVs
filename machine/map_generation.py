@@ -8,7 +8,6 @@ def generate_states_and_events(width_int, height_int):
         set_of_states[i] = automata.State('S'+str(i))
 
     number_of_events = 4*number_of_states-2*(width_int+height_int)
-    print(number_of_events)
 
     set_of_events = [None]*number_of_events
     for i in range(number_of_events):

@@ -16,19 +16,22 @@ class Simulator:
         self.x_states = self.uni_to_si_states(self.x_poses)
 
         self.robots.step()
-
+    
+        
     def step_begin(self):
         self.x_poses = self.robots.get_poses()
         self.x_states = self.uni_to_si_states(self.x_poses)
 
         return(self.x_poses, self.x_states)
     
+
     def step_end(self, goal):
         dxi = self.single_integrator_position_controller(self.x_states, goal[:2][:])
         dxu = self.si_to_uni_dyn(dxi, self.x_poses)
         self.robots.set_velocities(np.arange(self.n), dxu)
 
         self.robots.step()
+
 
 #Allways call Simulator.robots.call_at_scripts_end() at the end of each simulation
 
